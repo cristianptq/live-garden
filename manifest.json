@@ -1,0 +1,16 @@
+{
+  "name": "Grădina Vie — plan de cultură fără săpat",
+  "short_name": "Grădina Vie",
+  "description": "Plan de cultură no-dig, calendar de plantare, sarcini lunare și costuri de amenajare, adaptate zonei tale climatice.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f1ecdf",
+  "theme_color": "#221c14",
+  "lang": "ro",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

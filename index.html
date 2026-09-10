@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Grădina Vie — plan de cultură fără săpat</title>
+<meta name="theme-color" content="#221c14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{
+    --humus:#221c14; --humus-2:#332a1d;
+    --paie:#d9b45c; --paie-deep:#a97f2b;
+    --frunza:#4c6b3a; --frunza-deep:#33492a;
+    --hartie:#f1ecdf; --hartie-2:#e6ded0;
+    --rosu-rosie:#a8432f; --cerneala:#221c14;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--hartie); color:var(--cerneala); font-family:'Work Sans', -apple-system, sans-serif; line-height:1.5;}
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Work+Sans:wght@400;500;600;700&display=swap');
+  h1,h2,h3,.display{font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em;}
+
+  #shell{max-width:1080px;margin:0 auto;padding:0 16px 90px;}
+  header.top{padding:22px 4px 16px; border-bottom:2px solid var(--cerneala); margin-bottom:6px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+  header.top .brand{display:flex; flex-direction:column; gap:2px;}
+  header.top h1{font-size:1.5rem; margin:0; color:var(--frunza-deep);}
+  header.top .tagline{font-size:0.82rem; color:#5a5142; max-width:320px;}
+  header.top .top-right{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+
+  .lang-switch{display:flex; border:1px solid var(--cerneala); border-radius:100px; overflow:hidden;}
+  .lang-switch button{background:none; border:none; font-size:0.72rem; font-weight:700; padding:5px 12px; cursor:pointer; color:var(--cerneala); font-family:'Work Sans';}
+  .lang-switch button.active{background:var(--cerneala); color:#fff;}
+
+  nav.tabs{display:flex; gap:2px; flex-wrap:wrap; margin:16px 0 24px; border-bottom:1px solid #cfc6ae; overflow-x:auto;}
+  nav.tabs button{font-family:'Work Sans', sans-serif; font-size:0.82rem; font-weight:600; background:none; border:none; cursor:pointer;
+    padding:9px 12px 11px; color:#6b6250; border-bottom:3px solid transparent; transition:color .15s, border-color .15s; white-space:nowrap;}
+  nav.tabs button:hover{color:var(--cerneala);}
+  nav.tabs button.active{color:var(--frunza-deep); border-bottom-color:var(--paie-deep);}
+
+  section.panel{display:none;}
+  section.panel.active{display:block; animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .card{background:var(--hartie-2); border:1px solid #d3c9ac; border-radius:var(--radius); padding:20px 20px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-weight:600; font-size:0.9rem; margin-bottom:6px;}
+  .field .hint{font-size:0.78rem; color:#6b6250; margin-top:4px;}
+  select, input[type=text], input[type=number]{width:100%; padding:9px 10px; font-size:0.95rem; border:1px solid #b9ae8d;
+    border-radius:var(--radius); background:#fffdf7; color:var(--cerneala); font-family:inherit;}
+  .radio-row, .check-row{display:flex; flex-direction:column; gap:8px;}
+  .radio-row label, .check-row label{display:flex; align-items:flex-start; gap:8px; font-weight:400; cursor:pointer;
+    padding:10px 12px; border:1px solid #cfc6ae; border-radius:var(--radius); background:#fffdf7;}
+  .radio-row input, .check-row input{margin-top:3px; flex-shrink:0;}
+  .radio-row label:has(input:checked), .check-row label:has(input:checked){border-color:var(--frunza); background:#eef2e6;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  @media(max-width:640px){.two-col{grid-template-columns:1fr;}}
+  button.primary{background:var(--frunza-deep); color:#fff; border:none; font-family:'Work Sans', sans-serif; font-weight:700;
+    font-size:0.92rem; padding:12px 20px; border-radius:var(--radius); cursor:pointer;}
+  button.primary:hover{background:var(--frunza);}
+  button.ghost{background:none; border:1px solid #b9ae8d; color:var(--cerneala); font-weight:600; font-size:0.8rem;
+    padding:8px 12px; border-radius:var(--radius); cursor:pointer; display:inline-flex; align-items:center; gap:6px;}
+  button.ghost:hover{border-color:var(--cerneala);}
+  button.ghost:disabled{opacity:.5; cursor:default;}
+  .geo-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .geo-msg{font-size:0.78rem; color:#5a5142;}
+  .geo-msg.err{color:var(--rosu-rosie);}
+
+  .profile-summary{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 22px;}
+  .pill{background:var(--frunza-deep); color:#fff; font-size:0.74rem; font-weight:600; padding:5px 10px; border-radius:100px;}
+  .pill.alt{background:var(--paie-deep);}
+
+  .month-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  @media(max-width:800px){.month-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.month-grid{grid-template-columns:1fr;}}
+  .month-card{border:1px solid #cfc6ae; border-radius:var(--radius); background:#fffdf7; padding:13px 13px 15px; display:flex; flex-direction:column;}
+  .month-card.current{border-color:var(--frunza-deep); box-shadow:0 0 0 2px rgba(76,107,58,0.25) inset;}
+  .month-card h3{margin:0 0 8px; font-size:1.02rem; display:flex; justify-content:space-between; align-items:center;}
+  .month-card h3 .now-flag{font-size:0.62rem; background:var(--frunza-deep); color:#fff; padding:2px 7px; border-radius:100px; font-family:'Work Sans'; font-weight:700;}
+  .op-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px;}
+  .op{font-size:0.8rem; padding:7px 9px; border-radius:2px; border-left:3px solid var(--frunza); background:#f4f1e6;}
+  .op.action-semanat_interior{border-left-color:#8a5a2b;}
+  .op.action-semanat_direct{border-left-color:#4c6b3a;}
+  .op.action-transplant{border-left-color:#c9a227;}
+  .op.action-recoltare{border-left-color:var(--rosu-rosie);}
+  .op.action-general{border-left-color:#7a7160; background:#eeeadb;}
+  .op.action-constructie{border-left-color:var(--paie-deep); background:#faf1dc;}
+  .op .tag{font-weight:700; font-size:0.66rem; display:block; color:#5a5142; margin-bottom:2px;}
+  .op .range{float:right; font-size:0.68rem; color:#7a7160;}
+  .empty-note{font-size:0.76rem; color:#8a8168; font-style:italic;}
+
+  .task-month{margin-bottom:24px;}
+  .task-month h3{font-size:1.05rem; border-bottom:1px solid #cfc6ae; padding-bottom:6px; margin-bottom:10px;}
+  .task-item{display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px dashed #ddd4bc;}
+  .task-item input{margin-top:4px; flex-shrink:0;}
+  .task-item.done label{text-decoration:line-through; color:#a39c86;}
+  .task-item label{font-size:0.86rem; cursor:pointer; flex:1;}
+  .task-item .range{font-size:0.7rem; color:#8a8168; display:block; margin-top:2px;}
+
+  table.costs{width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:0.86rem;}
+  .table-wrap{overflow-x:auto;}
+  table.costs th, table.costs td{text-align:left; padding:9px 10px; border-bottom:1px solid #ddd4bc;}
+  table.costs th{color:#5a5142; font-size:0.72rem; text-transform:uppercase; letter-spacing:.03em; font-weight:700;}
+  table.costs tr.total td{font-weight:700; border-top:2px solid var(--cerneala); border-bottom:none;}
+  .disclaimer{font-size:0.76rem; color:#6b6250; background:var(--hartie-2); border:1px solid #d3c9ac; padding:12px 14px; border-radius:var(--radius); margin-top:8px;}
+
+  .principle{margin-bottom:20px; padding-left:16px; border-left:3px solid var(--paie-deep);}
+  .principle h3{margin:0 0 4px; font-size:1.02rem;}
+  .principle p{margin:0; font-size:0.88rem; color:#4a4436;}
+
+  .step-list{list-style:none; margin:0; padding:0; counter-reset:step;}
+  .step-item{counter-increment:step; display:flex; gap:14px; padding:14px 0; border-bottom:1px dashed #ddd4bc;}
+  .step-item::before{content:counter(step); flex-shrink:0; width:30px; height:30px; border-radius:50%; background:var(--frunza-deep); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem;}
+  .step-body h4{margin:0 0 3px; font-size:0.95rem;}
+  .step-body p{margin:0; font-size:0.86rem; color:#4a4436;}
+  .season-badge{display:inline-block; margin-top:5px; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:100px; background:#eef2e6; color:var(--frunza-deep);}
+  .season-note{background:var(--hartie-2); border:1px solid #d3c9ac; border-radius:var(--radius); padding:12px 14px; font-size:0.85rem; margin-bottom:18px;}
+
+  .install-hint{font-size:0.78rem; color:#6b6250; background:#eef2e6; border:1px solid #c9d6bc; border-radius:var(--radius); padding:10px 13px; margin:14px 0 4px;}
+</style>
+</head>
+<body>
+<div id="shell">
+  <header class="top">
+    <div class="brand">
+      <h1 id="appTitle">Grădina Vie</h1>
+      <div class="tagline" id="tagline">Plan de cultură fără săpat, adaptat zonei tale climatice și calendarului anual.</div>
+    </div>
+    <div class="top-right">
+      <div class="lang-switch">
+        <button id="langRO">RO</button><button id="langEN">EN</button>
+      </div>
+      <div id="headerSummary"></div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <section class="panel" id="panel-profil"></section>
+  <section class="panel" id="panel-calendar"></section>
+  <section class="panel" id="panel-sarcini"></section>
+  <section class="panel" id="panel-constructie"></section>
+  <section class="panel" id="panel-costuri"></section>
+  <section class="panel" id="panel-ghid"></section>
+</div>
+
+<script>
+/* =========================================================
+   I18N
+   ========================================================= */
+let LANG = localStorage.getItem('gradinaVieLang') || 'ro';
+
+const UI = {
+  ro:{
+    appTitle:'Grădina Vie', tagline:'Plan de cultură fără săpat, adaptat zonei tale climatice și calendarului anual.',
+    tabProfil:'Profil', tabCalendar:'Calendar plantare', tabSarcini:'Sarcini lunare', tabConstructie:'Construcția grădinii', tabCosturi:'Amenajare & costuri', tabGhid:'Ghid no-dig',
+    profilHeading:'Profilul grădinii tale', profilIntro:'Toate recomandările — calendarul de plantare, sarcinile lunare, pașii de construcție și lista de amenajare — se ajustează automat pe baza acestor răspunsuri.',
+    lblZona:'Zona climatică', hintZonaPrefix:'Exemplu: ',
+    btnDetect:'📍 Detectează automat locația mea', detecting:'Se detectează locația…',
+    detectDenied:'Nu am putut accesa locația (permisiune refuzată sau indisponibilă). Alege manual zona de mai sus.',
+    detectUnsupported:'Browserul tău nu suportă geolocalizare. Alege manual zona.',
+    detectNonRO:'Locația detectată e în afara României — am ales cea mai apropiată aproximare climatică. Verifică manual dacă e nevoie.',
+    detectSuccess:'Locație detectată: ',
+    detectZoneSuffix:' → zonă selectată automat: ',
+    lblStart:'Ce faci acum?', optStartZero:'Începe o grădină de la zero', optStartIntretinere:'Am deja o grădină de întreținut',
+    lblSuprafata:'Suprafață de cultivat (m²)', hintSuprafata:'Folosită pentru a estima cantitățile și costurile.',
+    lblMetoda:'Metodă de cultură',
+    optRasaduri:'Am spațiu protejat la interior și pot semăna singur/ă răsaduri (fereastră, pervaz, mini-seră)',
+    optTunel:'Am tunel joas / solar / pânză agrotextilă pentru cultură protejată afară',
+    hintMetoda:'Dacă nu bifezi prima opțiune, calendarul îți va recomanda să cumperi răsaduri de la pepinieră în perioada de plantat. Tunelul devansează primăvara și prelungește toamna cu ~3 săptămâni.',
+    btnSave:'Salvează profilul și generează calendarul',
+    pillNoua:'Grădină nouă', pillExistenta:'Grădină existentă', pillTunel:'Tunel/solar',
+    calendarHeading:'Calendar de plantare', calendarIntro:'Fiecare lună arată ce trebuie semănat, transplantat, recoltat sau întreținut. Ferestrele sunt orientative (± câteva zile în funcție de vreme reală).',
+    nowFlag:'acum', emptyNote:'Nimic de semnalat.',
+    tagSemanatInterior:'Semănat interior', tagSemanatDirect:'Semănat direct', tagTransplant:'Transplant', tagRecoltare:'Recoltare', tagGeneral:'Întreținere', tagConstructie:'Construcție',
+    lblSemanatInterior:'Semănat la interior', lblCumparaRasad:'Cumpără răsad și plantează', lblTransplantAfara:'Transplantat afară', lblSemanatDirect:'Semănat direct în grădină', lblRecoltare:'Recoltare',
+    needProfil:'Completează mai întâi Profilul.',
+    sarciniHeading:'Sarcini lunare, bifabile', sarciniIntro:'Aceleași operațiuni ca în calendar, sub formă de listă de bifat — utilă pentru a urmări ce ai făcut deja în acest an.',
+    constructieHeadingZero:'Construcția grădinii de la zero — pas cu pas', constructieIntroZero:'Ordinea recomandată pentru a transforma un teren neamenajat într-o grădină no-dig funcțională, fără săpat.',
+    constructieHeadingIntretinere:'Grădina ta e deja construită', constructieIntroIntretinere:'Iată pașii pentru a extinde grădina cu un strat nou sau a reface un strat vechi, dacă e nevoie. Pentru întreținerea anuală normală, vezi Calendar și Sarcini.',
+    seasonBest:'Moment ideal', seasonAlt:'Alternativă',
+    seasonNote:'Cel mai bun moment pentru acești pași este toamna (august–noiembrie): solul are timp să se așeze pe timpul iernii și poți planta direct din primăvară. Dacă începi primăvara (februarie–aprilie), procesul e la fel, dar straturile au nevoie de compost mai matur și de puțin mai mult timp de odihnă înainte de plantare.',
+    costuriHeadingZero:'Amenajare de la zero — estimare costuri', costuriHeadingIntretinere:'Întreținere anuală — estimare costuri',
+    costuriIntro1:'Calculat pentru', costuriIntro2:'m². Sumele sunt medii naționale estimative în RON (2026) — pot varia ±20-30% în funcție de regiune și furnizor.',
+    colArticol:'Articol', colCantitate:'Cantitate estimată', colCost:'Cost (RON)', rowTotal:'Total estimat',
+    disclaimerCosts:'Prețurile reale variază după județ și furnizor. Pentru carton, paie și paleți, sursele gratuite/reciclate (magazine locale, gospodari din zonă, OLX/Marketplace) reduc semnificativ costul. Pentru compost, verifică și opțiunea de a-l produce singur/ă din resturi vegetale — elimină costul complet pe termen mediu.',
+    ghidHeading:'Principiile de bază ale grădinăritului fără săpat',
+    ghidDisclaimer:'Aceste principii se aplică indiferent de zona climatică — doar calendarul de semănat/recoltat se schimbă în funcție de zonă.',
+    installHeading:'Instalează aplicația pe telefon',
+    installText:'Deschide acest link în Chrome (Android) sau Safari (iPhone) și alege „Adaugă pe ecranul principal” din meniul browserului — aplicația va apărea ca o iconiță, la fel ca o aplicație obișnuită.'
+  },
+  en:{
+    appTitle:'Living Garden', tagline:'A no-dig planting plan, tailored to your climate zone and the yearly calendar.',
+    tabProfil:'Profile', tabCalendar:'Planting calendar', tabSarcini:'Monthly tasks', tabConstructie:'Building the garden', tabCosturi:'Setup & costs', tabGhid:'No-dig guide',
+    profilHeading:'Your garden profile', profilIntro:'Every recommendation — the planting calendar, monthly tasks, build steps and shopping list — adjusts automatically based on your answers.',
+    lblZona:'Climate zone', hintZonaPrefix:'Example: ',
+    btnDetect:'📍 Detect my location automatically', detecting:'Detecting location…',
+    detectDenied:'Could not access your location (permission denied or unavailable). Please choose a zone manually above.',
+    detectUnsupported:'Your browser does not support geolocation. Please choose a zone manually.',
+    detectNonRO:'Your location is outside Romania — the closest climate approximation was chosen. Double check manually if needed.',
+    detectSuccess:'Location detected: ',
+    detectZoneSuffix:' → zone auto-selected: ',
+    lblStart:'What are you doing?', optStartZero:'Starting a garden from scratch', optStartIntretinere:'I already have a garden to maintain',
+    lblSuprafata:'Growing area (m²)', hintSuprafata:'Used to estimate quantities and costs.',
+    lblMetoda:'Growing method',
+    optRasaduri:'I have indoor space and can start my own seedlings (windowsill, mini-greenhouse)',
+    optTunel:'I have a low tunnel / hoop house / row cover for protected outdoor growing',
+    hintMetoda:'If you don\'t check the first option, the calendar will recommend buying seedlings from a nursery at transplant time. A tunnel brings spring ~3 weeks earlier and extends autumn ~3 weeks.',
+    btnSave:'Save profile and generate calendar',
+    pillNoua:'New garden', pillExistenta:'Existing garden', pillTunel:'Tunnel/greenhouse',
+    calendarHeading:'Planting calendar', calendarIntro:'Every month shows what to sow, transplant, harvest, or maintain. Windows are approximate (± a few days depending on actual weather).',
+    nowFlag:'now', emptyNote:'Nothing scheduled.',
+    tagSemanatInterior:'Indoor sowing', tagSemanatDirect:'Direct sowing', tagTransplant:'Transplant', tagRecoltare:'Harvest', tagGeneral:'Maintenance', tagConstructie:'Build',
+    lblSemanatInterior:'Sow indoors', lblCumparaRasad:'Buy seedlings and plant', lblTransplantAfara:'Transplant outdoors', lblSemanatDirect:'Direct sow in the garden', lblRecoltare:'Harvest',
+    needProfil:'Please complete your Profile first.',
+    sarciniHeading:'Monthly tasks, checkable', sarciniIntro:'The same operations as the calendar, as a checklist — useful for tracking what you\'ve already done this year.',
+    constructieHeadingZero:'Building a garden from scratch — step by step', constructieIntroZero:'The recommended order for turning unused ground into a working no-dig garden, without digging.',
+    constructieHeadingIntretinere:'Your garden is already built', constructieIntroIntretinere:'Here are the steps to expand your garden with a new bed, or rebuild an old one if needed. For regular yearly upkeep, see Calendar and Tasks.',
+    seasonBest:'Best time', seasonAlt:'Alternative',
+    seasonNote:'The best time for these steps is autumn (August–November): the soil has time to settle over winter and you can plant straight away in spring. If you start in spring (February–April) the process is the same, but the layers need more mature compost and a bit more resting time before planting.',
+    costuriHeadingZero:'Building from scratch — cost estimate', costuriHeadingIntretinere:'Annual maintenance — cost estimate',
+    costuriIntro1:'Calculated for', costuriIntro2:'m². Figures are estimated national averages in RON (2026) — they can vary ±20-30% by region and supplier.',
+    colArticol:'Item', colCantitate:'Estimated quantity', colCost:'Cost (RON)', rowTotal:'Estimated total',
+    disclaimerCosts:'Real prices vary by region and supplier. For cardboard, straw and pallets, free/recycled sources (local shops, neighbours, OLX/Marketplace) cut the cost significantly. For compost, consider making your own from garden and kitchen scraps — it removes the cost entirely over time.',
+    ghidHeading:'Core principles of no-dig gardening',
+    ghidDisclaimer:'These principles apply regardless of climate zone — only the sowing/harvest calendar changes with the zone.',
+    installHeading:'Install the app on your phone',
+    installText:'Open this link in Chrome (Android) or Safari (iPhone) and choose "Add to Home Screen" from the browser menu — the app will appear as an icon, just like a regular app.'
+  }
+};
+function t(key){ return (UI[LANG] && UI[LANG][key]!==undefined) ? UI[LANG][key] : (UI.ro[key]||key); }
+function L(obj, field){
+  if(LANG==='en'){ const v = obj[field+'_en']; return v!==undefined ? v : obj[field]; }
+  return obj[field];
+}
+
+/* =========================================================
+   ZONE MODEL
+   ========================================================= */
+const ZONES = {
+  calda:{
+    nume:"Zona caldă — Sud, Sud-Vest, Dobrogea, Câmpia de Vest", nume_en:"Warm zone — South, South-West, Dobrogea, Western Plain",
+    exemplu:"Craiova, Timișoara, Constanța, Alexandria, Turnu Măgurele", exemplu_en:"Craiova, Timișoara, Constanța, Alexandria, Turnu Măgurele",
+    S:13, F:44
+  },
+  temperata:{
+    nume:"Zona temperată — câmpie/deal central, București, Transilvania joasă", nume_en:"Temperate zone — central plains/hills, Bucharest, lowland Transylvania",
+    exemplu:"București, Ploiești, Cluj-Napoca, Arad, Sibiu (zonă joasă)", exemplu_en:"Bucharest, Ploiești, Cluj-Napoca, Arad, Sibiu (lowland)",
+    S:16, F:41
+  },
+  rece:{
+    nume:"Zona rece — podiș, deal înalt, depresiuni, zone montane, Moldova de Nord", nume_en:"Cold zone — plateau, highlands, basins, mountain areas, Northern Moldavia",
+    exemplu:"Suceava, Miercurea Ciuc, Vatra Dornei, zone de munte", exemplu_en:"Suceava, Miercurea Ciuc, Vatra Dornei, mountain areas",
+    S:19, F:39
+  }
+};
+const LUNI = {
+  ro:['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'],
+  en:['January','February','March','April','May','June','July','August','September','October','November','December']
+};
+
+function isoWeekDate(week, year){
+  const simple = new Date(Date.UTC(year,0,1+(week-1)*7));
+  const dow = simple.getUTCDay() || 7;
+  simple.setUTCDate(simple.getUTCDate() + (1-dow));
+  return simple;
+}
+function resolveWeek(weekNum){
+  let year = 2026, w = weekNum;
+  while(w<1){w+=52; year-=1;}
+  while(w>52){w-=52; year+=1;}
+  return isoWeekDate(w, year);
+}
+function weekInfo(weekNum){
+  const d = resolveWeek(weekNum);
+  const month = d.getUTCMonth();
+  const weekOfMonth = Math.ceil(d.getUTCDate()/7);
+  return {month, weekOfMonth, monthName: LUNI[LANG][month]};
+}
+function rangeLabel(a,b){
+  const wa = weekInfo(a), wb = weekInfo(b);
+  const wLabel = LANG==='en' ? 'wk' : 'săpt.';
+  if(wa.month === wb.month){
+    return wa.weekOfMonth===wb.weekOfMonth ? `${wa.monthName}, ${wLabel} ${wa.weekOfMonth}` : `${wa.monthName}, ${wLabel} ${wa.weekOfMonth}\u2013${wb.weekOfMonth}`;
+  }
+  return `${wa.monthName} (${wLabel}${wa.weekOfMonth}) \u2013 ${wb.monthName} (${wLabel}${wb.weekOfMonth})`;
+}
+function monthsTouched(a,b){
+  const months = new Set();
+  for(let w=a; w<=b; w++){ months.add(weekInfo(w).month); }
+  if(months.size===0) months.add(weekInfo(a).month);
+  return [...months];
+}
+
+/* =========================================================
+   CROPS DATABASE
+   ========================================================= */
+const CROPS = [
+  {id:'rosii', nume:'Roșii (tomate)', nume_en:'Tomatoes', familie:'Solanacee', familie_en:'Nightshades',
+    semanat_interior:{a:-8,b:-6}, transplant:{a:1,b:3}, recoltare_zile:[60,85], spatiere:'50 × 70 cm',
+    note:'Susține cu araci/spalier. Mulci gros de paie la bază pentru a preveni bolile de sol și a păstra umiditatea constantă.',
+    note_en:'Support with stakes or a trellis. Mulch thickly with straw at the base to prevent soil-borne disease and keep moisture steady.'},
+  {id:'ardei', nume:'Ardei', nume_en:'Peppers', familie:'Solanacee', familie_en:'Nightshades',
+    semanat_interior:{a:-9,b:-7}, transplant:{a:2,b:4}, recoltare_zile:[70,90], spatiere:'40 × 50 cm',
+    note:'Are nevoie de sol cald — nu grăbi transplantul, riscă să stagneze la frig.',
+    note_en:'Needs warm soil — don\'t rush the transplant, cold can stunt growth.'},
+  {id:'vinete', nume:'Vinete', nume_en:'Eggplant', familie:'Solanacee', familie_en:'Nightshades',
+    semanat_interior:{a:-9,b:-7}, transplant:{a:2,b:4}, recoltare_zile:[70,90], spatiere:'50 × 60 cm',
+    note:'Cea mai friguroasă dintre solanacee — transplantează ultima, când solul e ferm încălzit.',
+    note_en:'The most cold-sensitive nightshade — transplant it last, once the soil is firmly warmed.'},
+  {id:'castraveti', nume:'Castraveți', nume_en:'Cucumbers', familie:'Cucurbitacee', familie_en:'Cucurbits',
+    semanat_interior:{a:-4,b:-3}, semanat_direct:[{relTo:'S',a:1,b:3}], recoltare_zile:[50,60], spatiere:'40 × 100 cm (pe spalier)',
+    succesiune:true, succesiune_saptamani:4,
+    note:'Recoltează des (la 2 zile) pentru a stimula producția continuă. Bun candidat pentru semănat succesiv.',
+    note_en:'Harvest often (every 2 days) to keep production going. A good candidate for successive sowing.'},
+  {id:'dovlecei', nume:'Dovlecei', nume_en:'Zucchini/Squash', familie:'Cucurbitacee', familie_en:'Cucurbits',
+    semanat_interior:{a:-3,b:-2}, semanat_direct:[{relTo:'S',a:1,b:3}], recoltare_zile:[45,55], spatiere:'90 × 90 cm',
+    note:'O singură plantă poate produce foarte mult — nu planta prea multe pentru o gospodărie mică.',
+    note_en:'A single plant can be very productive — don\'t plant too many for a small household.'},
+  {id:'fasole', nume:'Fasole (păstăi)', nume_en:'Beans', familie:'Leguminoase', familie_en:'Legumes',
+    semanat_direct:[{relTo:'S',a:1,b:4}], recoltare_zile:[55,65], spatiere:'10 × 50 cm (tufă) / 20 × 100 cm (urcătoare)',
+    succesiune:true, succesiune_saptamani:3,
+    note:'Fixează azot în sol — excelentă pentru rotație după solanacee. Nu semăna înainte de încălzirea solului.',
+    note_en:'Fixes nitrogen in the soil — great for rotating after nightshades. Don\'t sow before the soil has warmed.'},
+  {id:'mazare', nume:'Mazăre', nume_en:'Peas', familie:'Leguminoase', familie_en:'Legumes',
+    semanat_direct:[{relTo:'S',a:-6,b:-3},{relTo:'F',a:-12,b:-10}], recoltare_zile:[60,70], spatiere:'5 × 40 cm',
+    note:'Tolerează îngheț ușor — poate fi semănată înainte de ultimul îngheț. Bună și pentru a doua rundă de toamnă.',
+    note_en:'Tolerates light frost — can be sown before the last frost. Also good for a second autumn round.'},
+  {id:'morcovi', nume:'Morcovi', nume_en:'Carrots', familie:'Umbelifere', familie_en:'Umbellifers',
+    semanat_direct:[{relTo:'S',a:-3,b:2},{relTo:'F',a:-16,b:-14}], recoltare_zile:[70,80], spatiere:'5 × 30 cm',
+    succesiune:true, succesiune_saptamani:4,
+    note:'Sol afânat, fără pietre, e esențial — în no-dig, morcovii cresc excelent în straturi cu compost gros.',
+    note_en:'Loose, stone-free soil is essential — in no-dig beds, carrots do great in a thick compost layer.'},
+  {id:'sfecla', nume:'Sfeclă roșie', nume_en:'Beetroot', familie:'Amarantacee', familie_en:'Amaranth family',
+    semanat_direct:[{relTo:'S',a:-2,b:2},{relTo:'F',a:-14,b:-12}], recoltare_zile:[55,65], spatiere:'10 × 30 cm',
+    succesiune:true, succesiune_saptamani:4,
+    note:'Rărește răsadurile la 10cm după răsărire pentru rădăcini uniforme.',
+    note_en:'Thin seedlings to 10cm after emergence for even roots.'},
+  {id:'ceapa', nume:'Ceapă (din arpagic)', nume_en:'Onions (from sets)', familie:'Aliacee', familie_en:'Alliums',
+    semanat_direct:[{relTo:'S',a:-6,b:-3}], recoltare_zile:[80,100], spatiere:'8 × 25 cm',
+    note:'Plantează arpagicul cât mai timpuriu în primăvară, chiar dacă solul e încă răcoros.',
+    note_en:'Plant onion sets as early as possible in spring, even while the soil is still cool.'},
+  {id:'usturoi', nume:'Usturoi', nume_en:'Garlic', familie:'Aliacee', familie_en:'Alliums',
+    semanat_direct:[{relTo:'F',a:-6,b:-3}], recoltare_zile:[240,270], spatiere:'10 × 20 cm',
+    note:'Se plantează toamna (sept–oct) și se recoltează în iulie anul următor, când o treime din foliaj s-a uscat.',
+    note_en:'Planted in autumn (Sep–Oct) and harvested the following July, when a third of the foliage has dried out.'},
+  {id:'salata', nume:'Salată', nume_en:'Lettuce', familie:'Asteracee', familie_en:'Asters (lettuce family)',
+    semanat_interior:{a:-6,b:-4}, semanat_direct:[{relTo:'S',a:-4,b:4},{relTo:'F',a:-10,b:-6}], recoltare_zile:[45,55], spatiere:'20 × 25 cm',
+    succesiune:true, succesiune_saptamani:2,
+    note:'Evită semănatul în plină caniculă (mijlocul verii) — germinează greu la căldură mare; reia toamna.',
+    note_en:'Avoid sowing during peak summer heat — germination struggles when it\'s hot; resume in autumn.'},
+  {id:'spanac', nume:'Spanac', nume_en:'Spinach', familie:'Amarantacee', familie_en:'Amaranth family',
+    semanat_direct:[{relTo:'S',a:-8,b:-5},{relTo:'F',a:-8,b:-4}], recoltare_zile:[40,50], spatiere:'10 × 25 cm',
+    succesiune:true, succesiune_saptamani:3,
+    note:'Cultură de răcoare — cele mai bune recolte sunt primăvara timpurie și toamna.',
+    note_en:'A cool-season crop — the best harvests are early spring and autumn.'},
+  {id:'ridichi', nume:'Ridichi', nume_en:'Radishes', familie:'Brasicacee', familie_en:'Brassicas',
+    semanat_direct:[{relTo:'S',a:-6,b:6},{relTo:'F',a:-10,b:-6}], recoltare_zile:[25,30], spatiere:'5 × 15 cm',
+    succesiune:true, succesiune_saptamani:2,
+    note:'Cea mai rapidă legumă din grădină — perfectă pentru a umple spații libere între alte culturi.',
+    note_en:'The fastest vegetable in the garden — perfect for filling gaps between other crops.'},
+  {id:'varza', nume:'Varză', nume_en:'Cabbage', familie:'Brasicacee', familie_en:'Brassicas',
+    semanat_interior:{a:-10,b:-8}, transplant:{a:-2,b:1}, recoltare_zile:[60,90], spatiere:'40 × 50 cm',
+    note:'Poate fi transplantată puțin înainte de ultimul îngheț (rezistă la frig ușor). Serie a doua pt toamnă: semănat interior în iulie, transplant în august.',
+    note_en:'Can be transplanted slightly before the last frost (fairly cold-tolerant). Second round for autumn: sow indoors in July, transplant in August.'},
+  {id:'broccoli', nume:'Broccoli', nume_en:'Broccoli', familie:'Brasicacee', familie_en:'Brassicas',
+    semanat_interior:{a:-8,b:-6}, transplant:{a:0,b:2}, recoltare_zile:[55,70], spatiere:'45 × 50 cm',
+    note:'Serie de toamnă recomandată: semănat interior în iulie, transplant la începutul lui august.',
+    note_en:'An autumn round is recommended: sow indoors in July, transplant in early August.'},
+  {id:'cartofi', nume:'Cartofi (no-dig)', nume_en:'Potatoes (no-dig)', familie:'Solanacee', familie_en:'Nightshades',
+    semanat_direct:[{relTo:'S',a:-3,b:1}], recoltare_zile:[90,140], spatiere:'30 × 70 cm',
+    note:'Pune tuberculii direct pe sol/compost și acoperă cu mulci gros de paie (20-30cm) — se adaugă mulci pe măsură ce plantele cresc, fără săpat.',
+    note_en:'Place tubers directly on the soil/compost and cover with a thick straw mulch (20-30cm) — add more mulch as plants grow, no digging.'},
+  {id:'patrunjel_marar', nume:'Pătrunjel / Mărar', nume_en:'Parsley / Dill', familie:'Umbelifere', familie_en:'Umbellifers',
+    semanat_direct:[{relTo:'S',a:-6,b:8}], recoltare_zile:[55,70], spatiere:'5 × 25 cm',
+    succesiune:true, succesiune_saptamani:5,
+    note:'Foarte rezistente — pot fi semănate eșalonat din primăvară până la mijlocul verii.',
+    note_en:'Very hardy — can be sown in stages from spring through midsummer.'}
+];
+
+/* =========================================================
+   GENERAL MAINTENANCE TASKS (month index 0-11)
+   ========================================================= */
+const GENERAL_TASKS = [
+  {luna:0, text:'Planifică rotația culturilor pe straturi și comandă semințele pentru anul acesta.', text_en:'Plan crop rotation across your beds and order this year\'s seeds.'},
+  {luna:0, text:'Verifică și ascute uneltele; curăță și dezinfectează ghivecele pentru răsaduri.', text_en:'Check and sharpen tools; clean and disinfect seedling pots.'},
+  {luna:1, text:'Pregătește amestecul de sol pentru semănat răsaduri (compost + turbă/fibră de cocos + nisip).', text_en:'Prepare seed-starting mix (compost + peat/coir + sand).'},
+  {luna:2, text:'Verifică grosimea mulciului pe straturile existente și completează unde s-a degradat.', text_en:'Check mulch thickness on existing beds and top up where it has broken down.'},
+  {luna:3, text:'Continuă călirea răsadurilor (expunere graduală afară) înainte de transplant.', text_en:'Continue hardening off seedlings (gradual outdoor exposure) before transplanting.'},
+  {luna:4, text:'Aplică primul strat gros de mulci de vară (paie) în jurul plantelor proaspăt transplantate.', text_en:'Apply the first thick summer mulch (straw) around freshly transplanted plants.'},
+  {luna:5, text:'Palisează/copilește roșiile; udă dimineața la rădăcină, nu pe foliaj.', text_en:'Stake/prune tomatoes; water in the morning at the base, not on the foliage.'},
+  {luna:6, text:'Menține un strat gros de mulci pentru a reduce nevoia de udare pe timp de secetă.', text_en:'Keep a thick mulch layer to reduce watering needs during dry spells.'},
+  {luna:7, text:'Pregătește straturile eliberate pentru a doua rundă de legume de toamnă (adaugă compost proaspăt la suprafață).', text_en:'Prepare freed-up beds for a second round of autumn vegetables (add fresh compost on top).'},
+  {luna:8, text:'Începe compostarea resturilor vegetale rămase după prima recoltă.', text_en:'Start composting plant residue left over from the first harvest.'},
+  {luna:9, text:'Curăță și mulcește gros straturile pentru iarnă; plantează cover crop (secară/măzăriche) pe straturile libere.', text_en:'Clean up and thickly mulch beds for winter; sow a cover crop (rye/vetch) on free beds.'},
+  {luna:10, text:'Adună frunze uscate pentru compost/mulci; protejează straturile sensibile cu un strat suplimentar.', text_en:'Gather dry leaves for compost/mulch; protect sensitive beds with an extra layer.'},
+  {luna:11, text:'Revizuiește notițele din acest an și planifică rotația și comenzile pentru anul viitor.', text_en:'Review this year\'s notes and plan rotation and orders for next year.'}
+];
+
+/* =========================================================
+   GARDEN BUILD STEPS (for start = 'zero')
+   ========================================================= */
+const BUILD_STEPS = [
+  {title:'Alege și marchează locul', title_en:'Choose and mark the site',
+   desc:'Alege un loc cu minimum 6 ore de soare/zi și acces facil la apă. Marchează conturul viitoarelor straturi.',
+   desc_en:'Pick a spot with at least 6 hours of sun a day and easy access to water. Mark the outline of the future beds.',
+   season:'oricand'},
+  {title:'Cosește / curăță vegetația existentă', title_en:'Mow / clear the existing vegetation',
+   desc:'Cosește iarba și buruienile cât mai scurt posibil. Nu e nevoie să le scoți din rădăcină — vor fi sufocate de stratul următor.',
+   desc_en:'Mow the grass and weeds as short as possible. No need to dig them out — they\'ll be smothered by the next layer.',
+   season:'ideal'},
+  {title:'Marchează aleile și lățimea straturilor', title_en:'Mark paths and bed widths',
+   desc:'Folosește țăruși și sfoară. Lățime recomandată pentru straturi: max. 1.2m (acces din ambele părți). Alei: 40-60cm.',
+   desc_en:'Use stakes and string. Recommended bed width: max 1.2m (so you can reach from both sides). Paths: 40-60cm.',
+   season:'oricand'},
+  {title:'Așază stratul de carton', title_en:'Lay down the cardboard layer',
+   desc:'Carton necerat, fără bandă adezivă, direct pe vegetația cosită, cu marginile suprapuse 10-15cm. Blochează lumina și sufocă buruienile fără să le extragi.',
+   desc_en:'Uncoated cardboard, tape removed, laid directly on the mown vegetation with edges overlapping 10-15cm. Blocks light and smothers weeds without pulling them out.',
+   season:'ideal'},
+  {title:'Udă bine cartonul', title_en:'Water the cardboard thoroughly',
+   desc:'Ajută la degradare și la lipirea de sol, prevenind deplasarea lui de vânt.',
+   desc_en:'Helps it break down and stick to the ground, so wind doesn\'t move it.',
+   season:'oricand'},
+  {title:'Adaugă un strat de compost', title_en:'Add a layer of compost',
+   desc:'5-10cm de compost/mold vegetal matur, direct peste carton.',
+   desc_en:'5-10cm of mature compost/leaf mould, straight on top of the cardboard.',
+   season:'ideal'},
+  {title:'Adaugă un strat de mulci', title_en:'Add a mulch layer',
+   desc:'10-15cm de paie, frunze sau resturi vegetale peste compost, pentru protecție și izolare.',
+   desc_en:'10-15cm of straw, leaves or plant residue over the compost, for protection and insulation.',
+   season:'ideal'},
+  {title:'Acoperă aleile separat', title_en:'Cover the paths separately',
+   desc:'Un strat gros de mulci grosier (paie, lemn măcinat, carton dublu) pe alei, ca să nu apară buruieni pe zonele de circulație.',
+   desc_en:'A thick layer of coarse mulch (straw, wood chips, double cardboard) on paths, to keep weeds out of walking areas.',
+   season:'oricand'},
+  {title:'Lasă stratul să se odihnească', title_en:'Let the bed rest',
+   desc:'Ideal 4-8 săptămâni. Straturile făcute toamna sunt gata de plantat din primăvară, fără nicio muncă suplimentară.',
+   desc_en:'Ideally 4-8 weeks. Beds built in autumn are ready to plant come spring, with no extra work.',
+   season:'oricand'},
+  {title:'Plantează direct în stratul nou', title_en:'Plant directly into the new bed',
+   desc:'Pentru semințe fine (morcov, salată), adaugă un strat suplimentar fin de compost cernut chiar în zona de semănat.',
+   desc_en:'For fine seeds (carrot, lettuce), add a thin extra layer of sieved compost right where you\'re sowing.',
+   season:'oricand'}
+];
+
+/* =========================================================
+   ROMANIA COUNTY → ZONE HEURISTIC (for geolocation)
+   ========================================================= */
+function normCounty(s){
+  if(!s) return '';
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+    .replace(/judetul|county|comitatul/g,'').replace(/[-\s]+/g,'').trim();
+}
+const CALDA_COUNTIES = ['dolj','olt','teleorman','giurgiu','calarasi','ialomita','constanta','tulcea','mehedinti','timis','arad','braila','galati'].map(normCounty);
+const RECE_COUNTIES = ['suceava','harghita','covasna','maramures','bistritanasaud','neamt','vrancea','hunedoara','alba','brasov','mures','valcea'].map(normCounty);
+
+function zoneFromCounty(countyRaw){
+  const c = normCounty(countyRaw);
+  if(CALDA_COUNTIES.includes(c)) return 'calda';
+  if(RECE_COUNTIES.includes(c)) return 'rece';
+  return 'temperata';
+}
+function zoneFromLatitudeFallback(lat){
+  if(lat < 45) return 'calda';
+  if(lat > 47.3) return 'rece';
+  return 'temperata';
+}
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let profile = null;
+try{ profile = JSON.parse(localStorage.getItem('gradinaVieProfile')||'null'); }catch(e){ profile = null; }
+let doneTasks = {};
+try{ doneTasks = JSON.parse(localStorage.getItem('gradinaVieTasksDone')||'{}'); }catch(e){ doneTasks = {}; }
+let activeTab = profile ? 'calendar' : 'profil';
+let geoState = {status:'idle', message:''}; // idle | loading | done | error
+
+function saveProfile(p){ profile = p; localStorage.setItem('gradinaVieProfile', JSON.stringify(p)); }
+function saveTasks(){ localStorage.setItem('gradinaVieTasksDone', JSON.stringify(doneTasks)); }
+function setLang(l){ LANG = l; localStorage.setItem('gradinaVieLang', l); document.documentElement.lang = l; renderAll(); }
+
+function effectiveSF(){
+  const z = ZONES[profile.zona];
+  let S = z.S, F = z.F;
+  if(profile.tunel){ S -= 3; F += 3; }
+  return {S,F};
+}
+
+/* =========================================================
+   BUILD MONTHLY OPERATIONS
+   ========================================================= */
+function buildMonthOps(){
+  const {S,F} = effectiveSF();
+  const months = {}; for(let i=0;i<12;i++) months[i]=[];
+
+  CROPS.forEach(c=>{
+    if(c.semanat_interior && profile.rasaduriAcasa){
+      const a=S+c.semanat_interior.a, b=S+c.semanat_interior.b;
+      monthsTouched(a,b).forEach(m=> months[m].push({crop:L(c,'nume'), action:'semanat_interior', label:t('lblSemanatInterior'), range:rangeLabel(a,b), note:L(c,'note')}));
+    } else if(c.semanat_interior && !profile.rasaduriAcasa){
+      const a=S+c.transplant.a, b=S+c.transplant.b;
+      monthsTouched(a,b).forEach(m=> months[m].push({crop:L(c,'nume'), action:'transplant', label:t('lblCumparaRasad'), range:rangeLabel(a,b), note:L(c,'note')}));
+    }
+    if(c.transplant && profile.rasaduriAcasa){
+      const a=S+c.transplant.a, b=S+c.transplant.b;
+      monthsTouched(a,b).forEach(m=> months[m].push({crop:L(c,'nume'), action:'transplant', label:t('lblTransplantAfara'), range:rangeLabel(a,b), note:L(c,'note')}));
+    }
+    if(c.semanat_direct){
+      c.semanat_direct.forEach(rangeDef=>{
+        const base = rangeDef.relTo==='S'?S:F;
+        const a=base+rangeDef.a, b=base+rangeDef.b;
+        const succNote = c.succesiune ? (LANG==='en' ? ` Repeat every ~${c.succesiune_saptamani} weeks for a continuous harvest.` : ` Repetă la fiecare ~${c.succesiune_saptamani} săpt. pentru recoltă continuă.`) : '';
+        monthsTouched(a,b).forEach(m=> months[m].push({crop:L(c,'nume'), action:'semanat_direct', label:t('lblSemanatDirect'), range:rangeLabel(a,b), note:L(c,'note') + succNote}));
+      });
+    }
+    let startRef = null;
+    if(c.transplant) startRef = S + c.transplant.a;
+    else if(c.semanat_direct) startRef = (c.semanat_direct[0].relTo==='S'?S:F) + c.semanat_direct[0].a;
+    if(startRef!==null && c.id!=='usturoi'){
+      const dMin=Math.round(c.recoltare_zile[0]/7), dMax=Math.round(c.recoltare_zile[1]/7);
+      const a=startRef+dMin, b=startRef+dMax;
+      monthsTouched(a,b).forEach(m=> months[m].push({crop:L(c,'nume'), action:'recoltare', label:t('lblRecoltare'), range:rangeLabel(a,b), note:''}));
+    }
+  });
+  months[6].push({crop:L(CROPS.find(c=>c.id==='usturoi'),'nume'), action:'recoltare', label:t('lblRecoltare'), range: LANG==='en'?'July':'Iulie', note: LANG==='en' ? 'Harvest when a third of the foliage has dried out.' : 'Recoltează când o treime din foliaj s-a uscat.'});
+
+  GENERAL_TASKS.forEach(task=> months[task.luna].push({crop: LANG==='en'?'Garden (general)':'Grădină (general)', action:'general', label: L(task,'text'), range:'', note:''}));
+
+  if(profile.start==='zero'){
+    const buildMonthsList = [7,8,9];
+    const buildLabel = LANG==='en' ? 'Build the first no-dig bed (see the "Building the garden" tab)' : 'Construiește primul strat no-dig (vezi tab-ul „Construcția grădinii”)';
+    buildMonthsList.forEach(m=> months[m].push({crop: LANG==='en'?'Setup':'Amenajare', action:'constructie', label:buildLabel, range:'', note:''}));
+  }
+
+  return months;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+const TABS = ['profil','calendar','sarcini','constructie','costuri','ghid'];
+const TAB_LABEL_KEY = {profil:'tabProfil', calendar:'tabCalendar', sarcini:'tabSarcini', constructie:'tabConstructie', costuri:'tabCosturi', ghid:'tabGhid'};
+
+function renderChrome(){
+  document.getElementById('appTitle').textContent = t('appTitle');
+  document.getElementById('tagline').textContent = t('tagline');
+  document.title = t('appTitle');
+  document.getElementById('langRO').className = LANG==='ro' ? 'active':'';
+  document.getElementById('langEN').className = LANG==='en' ? 'active':'';
+}
+
+function renderTabs(){
+  const nav = document.getElementById('tabs');
+  nav.innerHTML='';
+  TABS.forEach(id=>{
+    const btn=document.createElement('button');
+    btn.textContent=t(TAB_LABEL_KEY[id]);
+    btn.className = id===activeTab ? 'active':'';
+    btn.onclick=()=>{ activeTab=id; renderAll(); };
+    nav.appendChild(btn);
+  });
+  document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+activeTab).classList.add('active');
+}
+
+function renderHeaderSummary(){
+  const el = document.getElementById('headerSummary');
+  if(!profile){ el.innerHTML=''; return; }
+  el.innerHTML = `<div class="profile-summary">
+    <span class="pill">${L(ZONES[profile.zona],'nume').split('—')[0].trim()}</span>
+    <span class="pill alt">${profile.start==='zero'?t('pillNoua'):t('pillExistenta')}</span>
+    <span class="pill">${profile.suprafata} m²</span>
+    ${profile.tunel?`<span class="pill alt">${t('pillTunel')}</span>`:''}
+  </div>`;
+}
+
+function renderProfil(){
+  const p = document.getElementById('panel-profil');
+  const cur = profile || {zona:'temperata', start:'zero', suprafata:30, rasaduriAcasa:true, tunel:false};
+  p.innerHTML = `
+    <h2>${t('profilHeading')}</h2>
+    <p style="max-width:620px;color:#4a4436;">${t('profilIntro')}</p>
+    <div class="card">
+      <div class="field">
+        <label>${t('lblZona')}</label>
+        <div class="geo-row">
+          <button class="ghost" id="detectBtn" type="button">${t('btnDetect')}</button>
+        </div>
+        <div id="geoMsg"></div>
+        <select id="f-zona">
+          ${Object.entries(ZONES).map(([k,z])=>`<option value="${k}" ${cur.zona===k?'selected':''}>${L(z,'nume')}</option>`).join('')}
+        </select>
+        <div class="hint" id="zonaExemplu"></div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>${t('lblStart')}</label>
+          <div class="radio-row">
+            <label><input type="radio" name="start" value="zero" ${cur.start==='zero'?'checked':''}> ${t('optStartZero')}</label>
+            <label><input type="radio" name="start" value="intretinere" ${cur.start==='intretinere'?'checked':''}> ${t('optStartIntretinere')}</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>${t('lblSuprafata')}</label>
+          <input type="number" id="f-suprafata" min="1" value="${cur.suprafata}">
+          <div class="hint">${t('hintSuprafata')}</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>${t('lblMetoda')}</label>
+        <div class="check-row">
+          <label><input type="checkbox" id="f-rasaduri" ${cur.rasaduriAcasa?'checked':''}> ${t('optRasaduri')}</label>
+          <label><input type="checkbox" id="f-tunel" ${cur.tunel?'checked':''}> ${t('optTunel')}</label>
+        </div>
+        <div class="hint">${t('hintMetoda')}</div>
+      </div>
+      <button class="primary" id="saveProfil">${t('btnSave')}</button>
+    </div>
+    <div class="install-hint">📱 <strong>${t('installHeading')}</strong><br>${t('installText')}</div>
+  `;
+  const zonaSel = document.getElementById('f-zona');
+  const updateExemplu = ()=> document.getElementById('zonaExemplu').textContent = t('hintZonaPrefix') + L(ZONES[zonaSel.value],'exemplu');
+  zonaSel.onchange = updateExemplu; updateExemplu();
+
+  renderGeoMsg();
+  document.getElementById('detectBtn').onclick = doDetectLocation;
+
+  document.getElementById('saveProfil').onclick = ()=>{
+    const startVal = document.querySelector('input[name=start]:checked').value;
+    const newP = {
+      zona: zonaSel.value,
+      start: startVal,
+      suprafata: Math.max(1, parseInt(document.getElementById('f-suprafata').value)||30),
+      rasaduriAcasa: document.getElementById('f-rasaduri').checked,
+      tunel: document.getElementById('f-tunel').checked
+    };
+    saveProfile(newP);
+    activeTab='calendar';
+    renderAll();
+  };
+}
+
+function renderGeoMsg(){
+  const el = document.getElementById('geoMsg');
+  if(!el) return;
+  if(geoState.status==='idle'){ el.innerHTML=''; return; }
+  if(geoState.status==='loading'){ el.innerHTML = `<div class="geo-msg">${t('detecting')}</div>`; return; }
+  if(geoState.status==='error'){ el.innerHTML = `<div class="geo-msg err">${geoState.message}</div>`; return; }
+  if(geoState.status==='done'){ el.innerHTML = `<div class="geo-msg">${geoState.message}</div>`; return; }
+}
+
+function doDetectLocation(){
+  if(!navigator.geolocation){
+    geoState = {status:'error', message:t('detectUnsupported')};
+    renderGeoMsg();
+    return;
+  }
+  geoState = {status:'loading'};
+  renderGeoMsg();
+  navigator.geolocation.getCurrentPosition(async (pos)=>{
+    const {latitude, longitude} = pos.coords;
+    try{
+      const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=8&addressdetails=1`, {headers:{'Accept':'application/json'}});
+      const data = await resp.json();
+      const addr = data.address || {};
+      const country_code = (addr.country_code||'').toLowerCase();
+      const countyName = addr.county || addr.state || addr.city || '';
+      let zone, locLabel;
+      if(country_code === 'ro'){
+        zone = zoneFromCounty(countyName);
+        locLabel = countyName || data.display_name || `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+        geoState = {status:'done', message: t('detectSuccess') + locLabel + t('detectZoneSuffix') + L(ZONES[zone],'nume').split('—')[0].trim()};
+      } else {
+        zone = zoneFromLatitudeFallback(latitude);
+        locLabel = data.display_name || `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+        geoState = {status:'done', message: t('detectNonRO') + ' (' + locLabel + ')'};
+      }
+      const sel = document.getElementById('f-zona');
+      if(sel){ sel.value = zone; sel.dispatchEvent(new Event('change')); }
+    }catch(err){
+      geoState = {status:'error', message: t('detectDenied')};
+    }
+    renderGeoMsg();
+  }, (err)=>{
+    geoState = {status:'error', message:t('detectDenied')};
+    renderGeoMsg();
+  }, {timeout:10000});
+}
+
+function actionMeta(action){
+  return {
+    semanat_interior:{cls:'action-semanat_interior', tag:t('tagSemanatInterior')},
+    semanat_direct:{cls:'action-semanat_direct', tag:t('tagSemanatDirect')},
+    transplant:{cls:'action-transplant', tag:t('tagTransplant')},
+    recoltare:{cls:'action-recoltare', tag:t('tagRecoltare')},
+    general:{cls:'action-general', tag:t('tagGeneral')},
+    constructie:{cls:'action-constructie', tag:t('tagConstructie')}
+  }[action];
+}
+
+function renderCalendar(){
+  const p = document.getElementById('panel-calendar');
+  if(!profile){ p.innerHTML=`<p>${t('needProfil')}</p>`; return; }
+  const months = buildMonthOps();
+  const nowMonth = new Date().getMonth();
+  p.innerHTML = `<h2>${t('calendarHeading')} — ${L(ZONES[profile.zona],'nume').split('—')[0].trim()}</h2>
+   <p style="color:#4a4436;max-width:680px;">${t('calendarIntro')}</p>
+   <div class="month-grid">
+   ${LUNI[LANG].map((nume,idx)=>{
+     const ops = months[idx].sort((a,b)=> (a.action==='general')-(b.action==='general'));
+     return `<div class="month-card ${idx===nowMonth?'current':''}">
+       <h3>${nume} ${idx===nowMonth?`<span class="now-flag">${t('nowFlag')}</span>`:''}</h3>
+       <ul class="op-list">
+       ${ops.length? ops.map(o=>{
+         const meta = actionMeta(o.action);
+         return `<li class="op ${meta.cls}"><span class="tag">${meta.tag}${o.range?` <span class="range">${o.range}</span>`:''}</span>${(o.action==='general'||o.action==='constructie')? o.label : `${o.crop} — ${o.label}`}</li>`;
+       }).join('') : `<li class="empty-note">${t('emptyNote')}</li>`}
+       </ul>
+     </div>`;
+   }).join('')}
+   </div>`;
+}
+
+function renderSarcini(){
+  const p = document.getElementById('panel-sarcini');
+  if(!profile){ p.innerHTML=`<p>${t('needProfil')}</p>`; return; }
+  const months = buildMonthOps();
+  p.innerHTML = `<h2>${t('sarciniHeading')}</h2><p style="color:#4a4436;max-width:680px;">${t('sarciniIntro')}</p>`;
+  LUNI[LANG].forEach((nume,idx)=>{
+    const ops = months[idx];
+    if(!ops.length) return;
+    const wrap = document.createElement('div');
+    wrap.className='task-month';
+    wrap.innerHTML = `<h3>${nume}</h3>` + ops.map((o,i)=>{
+      const key = `${idx}-${i}-${o.crop}-${o.label}`.replace(/\s+/g,'_');
+      const checked = doneTasks[key]?'checked':'';
+      const doneCls = doneTasks[key]?'done':'';
+      const text = (o.action==='general'||o.action==='constructie') ? o.label : `${actionMeta(o.action).tag}: ${o.crop} — ${o.label}`;
+      return `<div class="task-item ${doneCls}" data-key="${key}">
+        <input type="checkbox" ${checked}>
+        <label>${text}${o.range?`<span class="range">${o.range}</span>`:''}</label>
+      </div>`;
+    }).join('');
+    p.appendChild(wrap);
+  });
+  p.querySelectorAll('.task-item input').forEach(inp=>{
+    inp.onchange = (e)=>{
+      const item = e.target.closest('.task-item');
+      const key = item.dataset.key;
+      doneTasks[key] = e.target.checked;
+      item.classList.toggle('done', e.target.checked);
+      saveTasks();
+    };
+  });
+}
+
+function renderConstructie(){
+  const p = document.getElementById('panel-constructie');
+  if(!profile){ p.innerHTML=`<p>${t('needProfil')}</p>`; return; }
+  if(profile.start==='zero'){
+    p.innerHTML = `<h2>${t('constructieHeadingZero')}</h2>
+    <p style="color:#4a4436;max-width:680px;">${t('constructieIntroZero')}</p>
+    <div class="season-note">${t('seasonNote')}</div>
+    <ul class="step-list">
+    ${BUILD_STEPS.map(s=>`<li class="step-item"><div class="step-body">
+      <h4>${L(s,'title')}</h4><p>${L(s,'desc')}</p>
+      ${s.season==='ideal'?`<span class="season-badge">${t('seasonBest')}: ${LANG==='en'?'Aug\u2013Nov':'aug\u2013nov'}</span>`:''}
+    </div></li>`).join('')}
+    </ul>`;
+  } else {
+    p.innerHTML = `<h2>${t('constructieHeadingIntretinere')}</h2>
+    <p style="color:#4a4436;max-width:680px;">${t('constructieIntroIntretinere')}</p>
+    <ul class="step-list">
+    ${BUILD_STEPS.map(s=>`<li class="step-item"><div class="step-body">
+      <h4>${L(s,'title')}</h4><p>${L(s,'desc')}</p>
+    </div></li>`).join('')}
+    </ul>`;
+  }
+}
+
+function renderCosturi(){
+  const p = document.getElementById('panel-costuri');
+  if(!profile){ p.innerHTML=`<p>${t('needProfil')}</p>`; return; }
+  const mp = profile.suprafata;
+  const rows = profile.start==='zero' ? (LANG==='en' ? [
+    ['Recycled cardboard (no-dig base layer)', 'free — collected boxes/packaging', 0],
+    ['Compost / leaf mould (~5cm layer)', `~${Math.round(mp*0.05)} m³ × 100-150 RON/m³`, Math.round(mp*0.05*125)],
+    ['Straw or plant mulch (~10cm layer)', `~${Math.ceil(mp/4)} bales × 25-35 RON`, Math.ceil(mp/4)*30],
+    ['Seeds for a diverse vegetable mix', `estimated for ${mp} m²`, Math.round(mp*4)],
+    ['Basic tools (hoe, shears, watering can, gloves)', 'one-time starter set', 320],
+    ['Path/bed edging (reclaimed pallets or boards)', 'optional', Math.round(mp*2)],
+    ['Drip irrigation system (optional, recommended)', `${mp} m² × 10-15 RON/m²`, Math.round(mp*12)],
+  ] : [
+    ['Carton reciclat (bază strat no-dig)', 'gratuit — cutii/ambalaje colectate', 0],
+    ['Compost / mold vegetal (strat de ~5cm)', `~${Math.round(mp*0.05)} m³ × 100-150 RON/m³`, Math.round(mp*0.05*125)],
+    ['Paie sau mulci vegetal (strat de ~10cm)', `~${Math.ceil(mp/4)} baloți × 25-35 RON`, Math.ceil(mp/4)*30],
+    ['Semințe pentru sortiment divers de legume', `estimat pentru ${mp} m²`, Math.round(mp*4)],
+    ['Unelte de bază (săpăligă, foarfece, stropitoare, mănuși)', 'set inițial, o singură dată', 320],
+    ['Delimitare alei/straturi (paleți sau șipci recuperate)', 'opțional', Math.round(mp*2)],
+    ['Sistem de irigare prin picurare (opțional, recomandat)', `${mp} m² × 10-15 RON/m²`, Math.round(mp*12)],
+  ]) : (LANG==='en' ? [
+    ['Extra annual compost (~2-3cm layer)', `~${Math.round(mp*0.025)} m³ × 100-150 RON/m³`, Math.round(mp*0.025*125)],
+    ['Mulch top-up', `~${Math.ceil(mp/8)} bales × 25-35 RON`, Math.ceil(mp/8)*30],
+    ['Seeds + occasional seedlings', `estimated for ${mp} m²`, Math.round(mp*3)],
+    ['Small tool upkeep/replacement', 'yearly', 80],
+  ] : [
+    ['Compost suplimentar anual (strat de ~2-3cm)', `~${Math.round(mp*0.025)} m³ × 100-150 RON/m³`, Math.round(mp*0.025*125)],
+    ['Mulci de reaprovizionare', `~${Math.ceil(mp/8)} baloți × 25-35 RON`, Math.ceil(mp/8)*30],
+    ['Semințe + eventual răsaduri de completare', `estimat pentru ${mp} m²`, Math.round(mp*3)],
+    ['Întreținere/înlocuire unelte mici', 'anual', 80],
+  ]);
+  if(profile.tunel){
+    rows.push(LANG==='en'
+      ? ['Tunnel film/mesh renewal (if needed)', `${mp} m² × 8-12 RON/m² (protected area only)`, Math.round(mp*10)]
+      : ['Folie/plasă pentru tunel joas (dacă e de reînnoit)', `${mp} m² × 8-12 RON/m² (doar zona protejată)`, Math.round(mp*10)]);
+  }
+  const total = rows.reduce((s,r)=>s+r[2],0);
+  p.innerHTML = `<h2>${profile.start==='zero'?t('costuriHeadingZero'):t('costuriHeadingIntretinere')}</h2>
+    <p style="color:#4a4436;max-width:680px;">${t('costuriIntro1')} <strong>${mp} m²</strong>. ${t('costuriIntro2')}</p>
+    <div class="table-wrap"><table class="costs">
+      <tr><th>${t('colArticol')}</th><th>${t('colCantitate')}</th><th>${t('colCost')}</th></tr>
+      ${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]} RON</td></tr>`).join('')}
+      <tr class="total"><td colspan="2">${t('rowTotal')}</td><td>${total} RON</td></tr>
+    </table></div>
+    <div class="disclaimer">${t('disclaimerCosts')}</div>`;
+}
+
+function renderGhid(){
+  const p = document.getElementById('panel-ghid');
+  const principii = [
+    ['Nu răstoarnă niciodată solul', 'Never turn the soil over', 'Solul se lasă intact — viața din el (ciuperci, bacterii, râme) rămâne neafectată. În loc de săpat, se adaugă materie organică la suprafață.', 'The soil is left intact — the life within it (fungi, bacteria, worms) stays undisturbed. Instead of digging, organic matter is added on top.'],
+    ['Mulci permanent, tot anul', 'Mulch permanently, all year', 'Solul nu trebuie să fie niciodată gol. Paiele, frunzele sau compostul acoperă solul, reduc udarea, țin buruienile la distanță și se transformă în hrană pentru sol.', 'The soil should never be left bare. Straw, leaves or compost cover it, cut down on watering, keep weeds away, and turn into food for the soil.'],
+    ['Compost aplicat la suprafață', 'Compost applied on top', 'În fiecare an se adaugă un strat de 2-5cm de compost peste stratul existent, fără a-l încorpora în sol.', 'Each year a 2-5cm layer of compost is added on top of the existing bed, without mixing it into the soil.'],
+    ['Alei fixe, straturi neatinse', 'Fixed paths, undisturbed beds', 'Nu se calcă niciodată pe straturile de cultură — doar pe alei dedicate. Așa solul rămâne afânat natural, fără tasare.', 'You never step on the growing beds — only on dedicated paths. This way the soil stays naturally loose, without compaction.'],
+    ['Rotația culturilor pe familii', 'Rotate crops by family', 'Nu se plantează aceeași familie (ex: solanacee) pe același strat 2 ani la rând — reduce bolile și epuizarea selectivă a nutrienților.', 'Don\'t plant the same family (e.g. nightshades) in the same bed two years running — it cuts disease pressure and selective nutrient depletion.'],
+    ['Cover crops toamna', 'Cover crops in autumn', 'Straturile eliberate toamna se însămânțează cu o cultură de acoperire (secară, măzăriche) care protejează solul iarna și se retează primăvara ca mulci verde.', 'Beds freed up in autumn are sown with a cover crop (rye, vetch) that protects the soil over winter and is cut down in spring as green mulch.']
+  ];
+  p.innerHTML = `<h2>${t('ghidHeading')}</h2>` +
+    principii.map(pr=>`<div class="principle"><h3>${LANG==='en'?pr[1]:pr[0]}</h3><p>${LANG==='en'?pr[3]:pr[2]}</p></div>`).join('') +
+    `<div class="disclaimer">${t('ghidDisclaimer')}</div>`;
+}
+
+function renderAll(){
+  renderChrome();
+  renderTabs();
+  renderHeaderSummary();
+  renderProfil();
+  renderCalendar();
+  renderSarcini();
+  renderConstructie();
+  renderCosturi();
+  renderGhid();
+}
+
+document.getElementById('langRO').onclick = ()=> setLang('ro');
+document.getElementById('langEN').onclick = ()=> setLang('en');
+
+renderAll();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{ /* not available over file:// - ignore */ });
+  });
+}
+</script>
+</body>
+</html>
